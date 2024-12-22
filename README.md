@@ -56,7 +56,7 @@ This repository includes:
 
 - A 3-tier RAG architecture setup (Web Client, Service Layer, and Vector Database).
 
-    ![A 3-tier RAG architecture ](images/3-tier rag.jpg)
+    ![A 3-tier RAG architecture ](images/3_tier_rag.jpg)
 - Preconfigured Genezio YAML files for deployment.
 - Hybrid search mechanisms combining dense, sparse, and late interaction embeddings.
 - Synthesizer logic to generate query-specific responses using an LLM.
