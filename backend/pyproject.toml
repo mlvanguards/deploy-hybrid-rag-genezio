@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = [
+    "Rares Istoc <istoc.rares@gmail.com>",
+    "Vesa Alexandru <vesaalexandru95@gmail.com>"
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+pypdf = "^4.2.0"
+openai = "^1.30.4"
+python-dotenv = "^1.0.1"
+pydantic = "^2.7.2"
+qdrant-client = "^1.9.1"
+streamlit = "^1.41.1"
+llama-index = "^0.10.42"
+fastapi = "^0.115.6"
+python-multipart = "^0.0.19"
+uvicorn = "^0.34.0"
+fastembed = "^0.4.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
