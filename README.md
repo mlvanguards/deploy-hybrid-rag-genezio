@@ -1,5 +1,4 @@
 # Deploy Hybrid RAG with Genezio
-!(images/genezio_logo.jpg)
 
 ## How Genezio Makes Deployment Easy, Fast, and Ready for the Real World
 
