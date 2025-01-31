@@ -1,98 +1,43 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Slider } from '@/components/ui/slider';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Upload, Search, RefreshCw } from 'lucide-react';
-
-const formatFileSize = (bytes) => {
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  let size = bytes;
-  let unitIndex = 0;
-
-  while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024;
-    unitIndex++;
-  }
-
-  return `${size.toFixed(2)} ${units[unitIndex]}`;
-};
-
-const DocumentCard = ({ document }) => {
-  return (
-    <Card className="mb-6 bg-slate-900 border-slate-800">
-      <CardHeader>
-        <CardTitle className="text-xl text-slate-100">📄 {document.filename}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-3 gap-6">
-          <div className="space-y-3">
-            <h4 className="font-medium text-lg text-slate-100 mb-4">File Details</h4>
-            <p className="text-slate-300">Size: {formatFileSize(document.file_size)}</p>
-            <p className="text-slate-300">Type: {document.file_type}</p>
-            <p className="text-slate-300">Pages: {document.pages.join(', ')}</p>
-          </div>
-          <div className="space-y-3">
-            <h4 className="font-medium text-lg text-slate-100 mb-4">Dates</h4>
-            <p className="text-slate-300">Created: {document.creation_date}</p>
-            <p className="text-slate-300">Modified: {document.last_modified_date}</p>
-          </div>
-          <div className="space-y-3">
-            <h4 className="font-medium text-lg text-slate-100 mb-4">Storage</h4>
-            <p className="text-slate-300">Path: {document.file_path}</p>
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <h4 className="font-medium text-lg text-slate-100 mb-4">Content Previews</h4>
-          <div className="space-y-4">
-            {document.text_chunks.map((chunk, index) => (
-              <div key={index} className="border border-slate-700 rounded-lg p-6 bg-slate-800">
-                <p className="font-medium text-slate-100 mb-3">Page {chunk.page}</p>
-                <p className="text-slate-300">{chunk.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Slider } from "@/components/ui/slider";
+import { Loader2, Upload, Search } from "lucide-react";
 
 const RAGDashboard = () => {
-  const [activeTab, setActiveTab] = useState('upload');
-  const [files, setFiles] = useState([]);
+  const [activeTab, setActiveTab] = useState("upload");
+  const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [numResults, setNumResults] = useState(5);
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  const handleFileChange = (event) => {
-    setFiles(Array.from(event.target.files));
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFiles(Array.from(event.target.files || []));
   };
 
   const handleUpload = async () => {
     setIsProcessing(true);
     try {
       const formData = new FormData();
-      files.forEach(file => formData.append('files', file));
+      files.forEach((file) => formData.append("files", file));
 
-      const response = await fetch(' http://localhost:53232/index', {
-        method: 'POST',
-        body: formData
+      const response = await fetch(" http://localhost:53232/index", {
+        method: "POST",
+        body: formData,
       });
 
-      if (!response.ok) throw new Error('Upload failed');
+      if (!response.ok) throw new Error("Upload failed");
 
       setFiles([]);
-      setActiveTab('documents');
+      setActiveTab("documents");
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
     } finally {
       setIsProcessing(false);
     }
@@ -108,16 +53,16 @@ const RAGDashboard = () => {
       });
 
       const response = await fetch(`http://localhost:53232/search?${params}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-        }
+          "Content-Type": "application/json",
+        },
       });
 
       const results = await response.json();
       setSearchResults(results.response);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error("Search error:", error);
     } finally {
       setIsSearching(false);
     }
@@ -128,10 +73,18 @@ const RAGDashboard = () => {
       <div className="container mx-auto p-8">
         <h1 className="text-4xl font-bold mb-8">📚 Genezio RAG</h1>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="mb-6 bg-slate-900">
-            <TabsTrigger value="upload" className="text-lg">Upload Documents</TabsTrigger>
-            <TabsTrigger value="search" className="text-lg">Search</TabsTrigger>
+            <TabsTrigger value="upload" className="text-lg">
+              Upload Documents
+            </TabsTrigger>
+            <TabsTrigger value="search" className="text-lg">
+              Search
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="upload">
@@ -147,9 +100,13 @@ const RAGDashboard = () => {
 
                 {files.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="font-medium text-lg text-slate-100 mb-4">Selected files:</h3>
+                    <h3 className="font-medium text-lg text-slate-100 mb-4">
+                      Selected files:
+                    </h3>
                     {files.map((file, index) => (
-                      <p key={index} className="text-slate-300">📄 {file.name}</p>
+                      <p key={index} className="text-slate-300">
+                        📄 {file.name}
+                      </p>
                     ))}
                   </div>
                 )}
@@ -187,7 +144,9 @@ const RAGDashboard = () => {
                   />
 
                   <div>
-                    <p className="text-lg mb-4 text-slate-300">Number of results: {numResults}</p>
+                    <p className="text-lg mb-4 text-slate-300">
+                      Number of results: {numResults}
+                    </p>
                     <Slider
                       value={[numResults]}
                       onValueChange={([value]) => setNumResults(value)}
@@ -220,7 +179,9 @@ const RAGDashboard = () => {
                     <div className="mt-8">
                       <Card className="bg-slate-800 border-slate-700">
                         <CardContent className="pt-6">
-                          <p className="text-slate-300 whitespace-pre-wrap">{searchResults}</p>
+                          <p className="text-slate-300 whitespace-pre-wrap">
+                            {searchResults}
+                          </p>
                         </CardContent>
                       </Card>
                     </div>
